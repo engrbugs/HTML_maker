@@ -38,15 +38,17 @@ using namespace std::chrono;
 
 const string HTML_FILENAME = "\\index.html";
 const string HTML_HEADER_BEGIN = "<!DOCTYPE html><html><head><title>Read</title></head>"
-"<body><style>body {background-color: #121212f5; color: #fff; font-family: 'Helvetica Neue',"
+"<body><style> body {background-color: #121212f5; color: #fff; font-family: 'Helvetica Neue',"
 "sans-serif; margin-left: 100px; margin-right: 100px; border-left: 16px; border-right: 16px; "
-"margin-top: 54px; line-height: 1.2; padding-left: 24px;} strong{font-weight: 400; font-size: "
-"44px;}</style></body>";
+"margin-top: 54px; line-height: 1.2; padding-left: 24px;} strong {font-weight: 400; font-size: "
+"44px;} div { margin-right: 100px; text-align: right;}</style></body>";
 const string HTML_HEADER_END = "</html>";
 const string HTML_QUOTE_APPEND_BEGIN = "<strong>";
 const string HTML_QUOTE_APPEND_END = "</strong>";
 const string HTML_NONQUOTE_APPEND_BEGIN = "";
 const string HTML_NONQUOTE_APPEND_END = "";
+const string HTML_AUTHOR_APPEND_BEGIN = "<div><br/>—";
+const string HTML_AUTHOR_APPEND_END = "</div>";
 
 // Global Variables:
 HINSTANCE hInst;                                // current instance
@@ -128,6 +130,12 @@ string ExePath() {
 }
 
 
+std::string tail(std::string const& source, size_t const length) {
+    if (length >= source.size()) { return source; }
+    return source.substr(source.size() - length);
+}
+
+
 void make_html(string body)
 {
     ofstream myfile;
@@ -188,6 +196,9 @@ int main()
     }
     file_source.close();
 
+    string number = line.substr(0, line_char-1);
+    line = tail(line, line.length() - line_char); // remove the '####-'
+
     debug = line + string("\n");
     OutputDebugString(debug.c_str());
     auto stop = high_resolution_clock::now();
@@ -198,7 +209,25 @@ int main()
         + string("\n");
     OutputDebugString(debug.c_str());
 
+    ofstream file_html(ExePath() + HTML_FILENAME);
+    file_html << HTML_HEADER_BEGIN << endl;
+    
+    std::string::difference_type n = std::count(line.begin(), line.end(), '“');
+    size_t start = 0;
+    for (int i = 0; i <= n - 1; i++)
+    {
 
+        file_html << HTML_QUOTE_APPEND_BEGIN << endl;
+        file_html << line << endl;
+        file_html << HTML_QUOTE_APPEND_END << endl;
+    }
+
+    
+    file_html << HTML_AUTHOR_APPEND_BEGIN << endl;
+    file_html << "Touch of Darkness, Line " + number << endl;
+    file_html << HTML_AUTHOR_APPEND_END << endl;
+    file_html << HTML_HEADER_END << endl;
+    file_html.close();
 
     //  open browser 
     ShellExecute(NULL, "open", (ExePath() + HTML_FILENAME).c_str(), NULL, NULL, SW_SHOWNORMAL);
