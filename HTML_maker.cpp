@@ -26,11 +26,8 @@
 #include <fstream>
 #include <limits>
 
-using std::cout; using std::cin;
 using std::endl; using std::string;
-
 namespace fs = std::filesystem;
-
 using namespace std;
 using namespace std::chrono;
 
@@ -212,15 +209,45 @@ int main()
     ofstream file_html(ExePath() + HTML_FILENAME);
     file_html << HTML_HEADER_BEGIN << endl;
     
+    //line = "Once inside, she took a seat, and Demetri did the same. “Want to tell me what happened?”";
     std::string::difference_type n = std::count(line.begin(), line.end(), '“');
-    size_t start = 0;
-    for (int i = 0; i <= n - 1; i++)
+    size_t quote_start = 0;
+    size_t reader = 0;
+    while (n != 0)
     {
+        quote_start = line.find('“', reader);
+        size_t quote_end = line.find('”', quote_start);
+        size_t next_quote = line.find('“', quote_start+1);
+        if (quote_start == reader)
+        {
+            file_html << HTML_QUOTE_APPEND_BEGIN << endl;
+            file_html << line.substr(quote_start, quote_end + 1) << endl;
+            file_html << HTML_QUOTE_APPEND_END << endl;
+            reader = quote_end + 1;
+            n--;
 
-        file_html << HTML_QUOTE_APPEND_BEGIN << endl;
-        file_html << line << endl;
-        file_html << HTML_QUOTE_APPEND_END << endl;
+        }
+        else
+        {
+            file_html << line.substr(reader, quote_start) << endl;
+            reader = quote_start;
+        }
+        if (n == 0 && reader != line.length())
+        {
+            file_html << line.substr(reader, line.length()) << endl;
+            reader = line.length();
+        }
+        else if (reader != next_quote && next_quote != -1)
+        {
+            file_html << line.substr(reader, next_quote-reader) << endl;
+            reader = next_quote;
+        }
+        //
+        //file_html << HTML_QUOTE_APPEND_BEGIN << endl;
+        //file_html << line << endl;
+        //file_html << HTML_QUOTE_APPEND_END << endl;
     }
+    
 
     
     file_html << HTML_AUTHOR_APPEND_BEGIN << endl;
