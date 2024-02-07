@@ -4,6 +4,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.3.32804.467
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HTML_maker", "HTML_maker.vcxproj", "{3DBDAD86-5780-42B9-B042-88E32DCD5068}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3F136974-E848-43B0-A835-878C8B8B0C8F} = {3F136974-E848-43B0-A835-878C8B8B0C8F}
+		{621B308C-3D59-46D5-AF34-A020A647BAF9} = {621B308C-3D59-46D5-AF34-A020A647BAF9}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "read", "read\read.vcxproj", "{621B308C-3D59-46D5-AF34-A020A647BAF9}"
 EndProject
